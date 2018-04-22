@@ -63,7 +63,9 @@ public class Order {
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 	
-	
+//	public Order() {
+//	  System.out.print("无参构造器");
+//	}
 //	public Order(String productType, String venderName, int quantity, float venderUnitPrice, float sellUnitPrice,
 //			String shopName, Date orderDate, Customer customer) {
 //		super();
@@ -148,6 +150,7 @@ public class Order {
 
 	public void setVenderTotalPrice(float venderTotalPrice) {
 		this.venderTotalPrice = this.getVenderUnitPrice() * this.getQuantity();
+		//this.venderTotalPrice = venderTotalPrice;
 	}
 
 	public void setSellTotalPrice(float sellTotalPrice) {

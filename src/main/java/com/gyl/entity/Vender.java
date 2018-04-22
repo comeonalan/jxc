@@ -11,11 +11,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * 
  * @author Alan 厂家表
  */
-
+@JsonIgnoreProperties(value={"products"})
 @Table(name = "vender")
 @Entity
 public class Vender {
@@ -26,6 +28,10 @@ public class Vender {
 	
 	@NotBlank(message="厂家名称不能为空")
 	private String name;
+	
+	private String address;
+	
+	private String telephone;
 
 	@OneToMany(mappedBy = "vender", cascade = CascadeType.ALL)
 	private Set<Product> products;
@@ -52,6 +58,22 @@ public class Vender {
 
 	public void setProducts(Set<Product> products) {
 		this.products = products;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
 	}
 
 }
