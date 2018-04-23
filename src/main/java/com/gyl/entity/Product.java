@@ -1,6 +1,8 @@
 package com.gyl.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -26,7 +28,7 @@ public class Product {
 	@NotBlank(message="货物型号不能为空")
 	private String type;
 
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
 	@JoinColumn(name = "vender_id")
 	private Vender vender;
 

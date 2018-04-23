@@ -1,17 +1,23 @@
 package com.gyl.controller;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gyl.entity.Product;
+import com.gyl.entity.Vender;
+import com.gyl.formbean.ProductDTO;
 import com.gyl.service.ProductService;
 
 @Controller
@@ -27,11 +33,14 @@ public class ProductController {
 //		return productService.getProductById(id);
 //	}
 //	
-//	@ResponseBody
-//	@RequestMapping(value="/All")
-//	public List<Product> getAllProduct() {
-//		return productService.getAllProducts();
-//	}
+	@ResponseBody
+	@GetMapping(value="/getProductsByType")
+	public Map<String, List<ProductDTO>> getProductsByType(@RequestParam(value="type",required=false) String type) {
+		Map<String, List<ProductDTO>> map = new HashMap<String, List<ProductDTO>>();
+		List<ProductDTO> products = productService.getProductsByType(type);
+		map.put("products", products);
+		return map;
+	}
 	
 	//@PostMapping = @RequestMapping(method = RequestMethod.POST)
 	//@RequestMapping(value="/addNewProduct", method=RequestMethod.POST)
