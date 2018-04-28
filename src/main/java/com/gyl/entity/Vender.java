@@ -4,7 +4,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,8 +32,8 @@ public class Vender {
 	private String address;
 	
 	private String telephone;
-
-	@OneToMany(mappedBy = "vender",cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
+    //fetch:表示抓取策略,@OneToMany默认为FetchType.LAZY
+	@OneToMany(mappedBy = "vender",cascade = {CascadeType.REMOVE,CascadeType.MERGE})
 	private Set<Product> products;
 
 	public int getId() {

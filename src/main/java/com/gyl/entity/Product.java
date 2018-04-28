@@ -2,7 +2,6 @@ package com.gyl.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -27,8 +26,9 @@ public class Product {
     
 	@NotBlank(message="货物型号不能为空")
 	private String type;
-
-	@ManyToOne(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
+	//fetch:表示抓取策略,@ManyToOne默认为FetchType.EAGER
+	//optional:是否允许该字段为null,该属性应该根据数据库表的外键约束来确定,默认为true
+	@ManyToOne(cascade = {CascadeType.MERGE,CascadeType.REFRESH},optional=true)
 	@JoinColumn(name = "vender_id")
 	private Vender vender;
 

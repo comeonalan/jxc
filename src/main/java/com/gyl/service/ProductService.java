@@ -1,7 +1,9 @@
 package com.gyl.service;
 
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.gyl.dao.ProductDao;
 import com.gyl.entity.Product;
 import com.gyl.formbean.ProductDTO;
-import com.mysql.jdbc.StringUtils;
 
 @Service
 public class ProductService {
@@ -30,5 +31,28 @@ public class ProductService {
 //			return
 //		}
 		return productDao.findByType(type);
+	}
+	
+	public void deleteProductById(long id) {
+		productDao.deleteById(id);
+	}
+	
+	public void deleteProductsByIds(String ids) {
+		String[] reIds =ids.split(",");
+		Set<Long> idSet = new HashSet<Long>();
+		for(String x : reIds) {
+			idSet.add(Long.parseLong(x));
+		}
+		productDao.deleteProductsByIds(idSet);
+	}
+
+	public void modifyProductInfo(ProductDTO productDTO) {
+		 Product returnedProduct = productDao.getOne(productDTO.getId());
+		 if(returnedProduct!=null) {
+			 returnedProduct.setName(productDTO.getName());
+			 returnedProduct.setType(productDTO.getType());
+			 productDao.save(returnedProduct);
+		 }
+		
 	}
 }

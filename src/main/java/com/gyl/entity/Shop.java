@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 /**
  * 
@@ -16,7 +17,8 @@ public class Shop {
 	@Id
 	@GeneratedValue
 	private int id;
-
+    
+	@NotBlank(message="店铺名称不能为空")
 	private String name;
 
 	private String address;

@@ -15,12 +15,12 @@ import com.gyl.entity.Vender;
 @Transactional(readOnly = true)
 @Repository
 public interface VenderDao extends JpaRepository<Vender,Integer> {
+	
 //@Query("select vender from Vender vender where vender.name like %:name% ")
- 
 public List<Vender> findByNameIgnoreCaseContaining(String name);
 //public Vender save(Vender vender);
 
-@Transactional
+@Transactional(readOnly = false)
 @Modifying  //modify将会将事务readonly 设置为false
 @Query("delete from Vender vender where vender.id in :ids ")
 public void deleteVendersByIds(@Param("ids")Set<Integer> idSet);
