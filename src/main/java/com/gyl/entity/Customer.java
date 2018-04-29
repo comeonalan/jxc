@@ -2,14 +2,13 @@ package com.gyl.entity;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+//import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -20,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 
 //@JsonIgnoreProperties 防止产生死循环问题，因为Customer中有order，order中又有customer
-//@JsonIgnoreProperties(value={"orders"})  
+@JsonIgnoreProperties(value={"orders"})  
 @Table(name = "customer")
 @Entity
 public class Customer {
@@ -36,10 +35,10 @@ public class Customer {
 	@NotBlank(message="客户地址不能为空")
 	private String address;
 	 
-	@Pattern(regexp="^[1][1-9]{2}[0-9]{8}$",message="{customer.telephone.message}")
+//	@Pattern(regexp="^[1][1-9]{2}[0-9]{8}$",message="{customer.telephone.message}")
 	private String telephone;
 
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "customer")
 	private Set<Order> orders;
 
 	public long getId() {

@@ -35,7 +35,7 @@ public class ShopController {
 	}
 	
 	@DeleteMapping("/deleteShopById")
-	public String deleteProductById(int id) {
+	public String deleteShopById(int id) {
 		  try {
 			  shopService.deleteShopById(id);
 		  }catch(Exception e) {

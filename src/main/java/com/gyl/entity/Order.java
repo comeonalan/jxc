@@ -11,13 +11,12 @@ import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * 
  * @author Alan 订单表
  */
-@JsonIgnoreProperties(value={"customer"})
+//@JsonIgnoreProperties(value={"customer"})
 //表名不能设置为order，因为order在db里是关键字
 @Table(name = "t_order")
 @Entity
