@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gyl.entity.Order;
+import com.gyl.formbean.OrderDTO;
 import com.gyl.service.OrderService;
 
 @RestController
@@ -50,6 +52,25 @@ public class OrderController {
 //		List<Order> orders = page.getContent();
  		Map<String, List<Order>> map = new HashMap<String, List<Order>>();
 		map.put("orders", list);
+		return map;
+	}
+	
+	@GetMapping("/getOrders")
+	public Map<String, Object> getOrders(OrderDTO orderDTO,@RequestParam(value = "page", defaultValue = "1")int page){
+		//每页5条数据
+		int size = 5;
+		Page<Order> orderPage =orderService.getOrdersByShopNameAndCustomerId(page-1,size,orderDTO);
+		List<Order> orders = new ArrayList<Order>();
+		Iterator<Order> it=orderPage.iterator(); 
+	     while(it.hasNext()) {
+	    	 orders.add( it.next());
+	     }
+//		List<Order> orders = page.getContent();
+	     //总页面数
+	    int total=orderPage.getTotalPages();
+ 		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("orders", orders);
+		map.put("total", total);
 		return map;
 	}
 
