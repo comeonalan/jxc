@@ -58,6 +58,8 @@ public class CustomerService {
 		
 	}
 
-	 
+	 public Customer getCustomerById(long id) {
+		 return customerDao.getOne(id);
+	 }
 	
 }

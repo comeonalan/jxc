@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * 
  * @author Alan 厂家表
  */
-@JsonIgnoreProperties(value={"products"})
+//@JsonIgnoreProperties(value={"products"})
 @Table(name = "vender")
 @Entity
 public class Vender {

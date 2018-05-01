@@ -31,6 +31,9 @@ public class OrderService {
 	@Autowired
 	private OrderDao orderDao;
 	
+	public Order addOrder(Order order) {
+		return orderDao.save(order);
+	}
 	
 	public void addOrders(List<Order> orders) {
 		orderDao.saveAll(orders);

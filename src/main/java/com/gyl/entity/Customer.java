@@ -2,6 +2,7 @@ package com.gyl.entity;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -38,7 +39,7 @@ public class Customer {
 //	@Pattern(regexp="^[1][1-9]{2}[0-9]{8}$",message="{customer.telephone.message}")
 	private String telephone;
 
-	@OneToMany(mappedBy = "customer")
+	@OneToMany(mappedBy = "customer",cascade = {CascadeType.REMOVE,CascadeType.MERGE})
 	private Set<Order> orders;
 
 	public long getId() {
