@@ -101,4 +101,29 @@ public class OrderService {
 		};
 		return orderDao.findAll(spec, pageable);
 	}
+
+	public void modifyOrderInfo(Order order) {
+	 Order returnedOrder = orderDao.getOne(order.getId());
+	 if(returnedOrder!=null) {
+		 returnedOrder.setDeposit(order.getDeposit());
+		 returnedOrder.setOrderDate(order.getOrderDate());
+		 returnedOrder.setStatus(order.getStatus());
+		 orderDao.save(returnedOrder);
+	 }
+		
+	}
+
+	public void deleteOrderById(long id) {
+		orderDao.deleteById(id);
+	}
+
+	public void deleteOrdersByIds(String ids) {
+		String[] reIds =ids.split(",");
+		Set<Long> idSet = new HashSet<Long>();
+		for(String x : reIds) {
+			idSet.add(Long.parseLong(x));
+		}
+		orderDao.deleteOrdersByIds(idSet);
+		
+	}
 }

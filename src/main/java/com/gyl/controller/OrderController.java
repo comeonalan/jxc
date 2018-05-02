@@ -8,7 +8,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,6 +102,40 @@ public class OrderController {
 		map.put("orders", orders);
 		map.put("total", total);
 		return map;
+	}
+	
+	@PatchMapping("/modifyOrder")
+	public String modifyOrder(@RequestBody Order order) {
+	    try {
+	    	orderService.modifyOrderInfo(order);
+	    }catch(Exception e) {
+	    	System.out.println("更新订单信息失败错误信息--》"+e);
+	    	return "更新订单信息失败！";
+	    }
+	    return "更新订单信息成功！";
+	
+	}
+	
+	@DeleteMapping("/deleteOrderById")
+	public String deleteOrderById(long id) {
+		  try {
+			  orderService.deleteOrderById(id);
+		  }catch(Exception e) {
+			   System.out.println("删除订单错误信息--》"+e);
+			  return "删除订单失败!"; 
+		  }
+		  return "删除订单成功!"; 
+	}
+	
+	@DeleteMapping("/deleteOrdersByIds")
+	public String deleteOrdersByIds(String ids) {
+		  try {
+			  orderService.deleteOrdersByIds(ids);
+		  }catch(Exception e) {
+			   System.out.println("批量删除店铺错误信息--》"+e);
+			  return "批量删除店铺失败!"; 
+		  }
+		  return "批量删除店铺成功!"; 
 	}
 
 }

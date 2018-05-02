@@ -3,6 +3,8 @@ package com.gyl.formbean;
 import java.sql.Date;
 
 public class OrderDTO {
+	//订单id
+	private String id;
 
 	private String customerIds;
 	
@@ -75,6 +77,14 @@ public class OrderDTO {
 
 	public void setShopName(String shopName) {
 		this.shopName = shopName;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

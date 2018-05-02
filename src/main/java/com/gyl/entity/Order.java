@@ -3,6 +3,7 @@ package com.gyl.entity;
 import java.sql.Date;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -43,7 +44,7 @@ public class Order {
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 	
-	@OneToMany(mappedBy = "order")
+	@OneToMany(mappedBy = "order",cascade = {CascadeType.REMOVE})
 	private Set<OrderDetail> orderDetails;
 	
 //	public Order() {
