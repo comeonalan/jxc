@@ -14,6 +14,8 @@ public class OrderDTO {
 	
 	private String shopName;
 	
+	
+	
  
 	public String getCustomerId() {
 		return customerId;

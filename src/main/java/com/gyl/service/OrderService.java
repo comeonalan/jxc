@@ -2,6 +2,7 @@ package com.gyl.service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -22,14 +23,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.gyl.dao.OrderDao;
+import com.gyl.dao.OrderItemDao;
 import com.gyl.entity.Order;
+import com.gyl.entity.OrderItem;
 import com.gyl.formbean.OrderDTO;
+import com.gyl.formbean.OrderItemDTO;
 
 @Service
 public class OrderService {
 
 	@Autowired
 	private OrderDao orderDao;
+	
+	@Autowired
+	private OrderItemDao orderItemDao;
 	
 	public Order addOrder(Order order) {
 		return orderDao.save(order);
@@ -126,4 +133,73 @@ public class OrderService {
 		orderDao.deleteOrdersByIds(idSet);
 		
 	}
+	
+	public Order getOrderById(long id) {
+		return orderDao.getOne(id);
+	}
+	
+	public List<OrderItem> getOrderItemsByOrderId(long id){
+		Order order = getOrderById(id);
+		return transferSetToList(order.getOrderItems());
+	}
+	
+	private List<OrderItem> transferSetToList(Set<OrderItem> set) {
+		List<OrderItem> list= new ArrayList<OrderItem>();
+	    Iterator<OrderItem> it =set.iterator();
+		while(it.hasNext()) {
+			list.add(it.next());
+		}
+		return list;
+	}
+	
+	public void addOrderItem(OrderItem orderItem,long orderId) {
+	 
+		Order order = orderDao.findById(orderId).get();
+		orderItem.setOrder(order);
+ 
+		Set<OrderItem> set = order.getOrderItems();
+		set.add(orderItem);
+		order.setOrderItems(set);
+		orderDao.save(order);
+	}
+	
+	public OrderItem getOrderItemById(long id) {
+		return orderItemDao.findById(id).get();
+	}
+	
+	public void deleteOrderItemById(long id) {
+		orderItemDao.deleteById(id);
+	}
+	
+	public void deleteOrderItemsByIds(String ids) {
+		String[] reIds =ids.split(",");
+		Set<Long> idSet = new HashSet<Long>();
+		for(String x : reIds) {
+			idSet.add(Long.parseLong(x));
+		}
+		orderItemDao.deleteOrderItemsByIds(idSet);
+		
+	}
+
+	public void modifyOrderInfo(OrderItemDTO orderItemDTO, long orderId) {
+		OrderItem returnedOrderItem	= orderItemDao.findById(orderItemDTO.getId()).get();
+		returnedOrderItem.setProductType(orderItemDTO.getProductType());
+		returnedOrderItem.setQuantity(orderItemDTO.getQuantity());
+		returnedOrderItem.setSellUnitPrice(orderItemDTO.getSellUnitPrice());
+		returnedOrderItem.setVenderUnitPrice(orderItemDTO.getVenderUnitPrice());
+		returnedOrderItem.setVenderName(orderItemDTO.getVenderName());
+		 float venderTotalPrice = orderItemDTO.getVenderUnitPrice()*orderItemDTO.getQuantity();
+		 returnedOrderItem.setVenderTotalPrice(venderTotalPrice);
+		 float SellTotalPrice = orderItemDTO.getSellUnitPrice() * orderItemDTO.getQuantity();
+		 returnedOrderItem.setSellTotalPrice(SellTotalPrice);
+		 float profit = SellTotalPrice - venderTotalPrice;
+		 returnedOrderItem.setProfit(profit);
+		 
+		 orderItemDao.save(returnedOrderItem);
+	}
+
+	 public List<OrderItem> getOrderItemsByProductTypeAndOrderId(String productType,long id){
+		return  orderItemDao.findByProductTypeAndOrderId(productType, id);
+	 }
+	
 }

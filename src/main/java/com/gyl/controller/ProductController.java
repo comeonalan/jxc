@@ -40,6 +40,9 @@ public class ProductController {
 	@GetMapping(value="/getProductsByType")
 	public Map<String, List<ProductDTO>> getProductsByType(@RequestParam(value="type",required=false) String type) {
 		Map<String, List<ProductDTO>> map = new HashMap<String, List<ProductDTO>>();
+		if(type==null) {
+			type ="";
+		}
 		List<ProductDTO> products = productService.getProductsByType(type);
 		map.put("products", products);
 		return map;

@@ -7,14 +7,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * 订单详情表
  * @author Alan
  *
  */
-@Table(name = "t_order_detail")
+@JsonIgnoreProperties(value={"order"})
+@Table(name = "t_order_item")
 @Entity
-public class OrderDetail {
+public class OrderItem {
 
   //订单详情id
   @Id
@@ -90,16 +93,18 @@ public class OrderDetail {
 	}
 	
 	public void setVenderTotalPrice(float venderTotalPrice) {
-		this.venderTotalPrice = this.getVenderUnitPrice() * this.getQuantity();
-		//this.venderTotalPrice = venderTotalPrice;
+	//	this.venderTotalPrice = this.getVenderUnitPrice() * this.getQuantity();
+		 this.venderTotalPrice = venderTotalPrice;
 	}
 
 	public void setSellTotalPrice(float sellTotalPrice) {
-		this.sellTotalPrice = this.getSellUnitPrice() * this.getQuantity();
+		//this.sellTotalPrice = this.getSellUnitPrice() * this.getQuantity();
+		this.sellTotalPrice = sellTotalPrice;
 	}
 
 	public void setProfit(float profit) {
-		this.profit = (this.getSellUnitPrice()-this.getVenderUnitPrice()) * this.getQuantity();
+		this.profit = profit;
+	//	this.profit = (this.getSellUnitPrice()-this.getVenderUnitPrice()) * this.getQuantity();
 	}
 	
 	public float getVenderTotalPrice() {
@@ -113,4 +118,21 @@ public class OrderDetail {
 	public float getProfit() {
 		return profit;
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+	
 }

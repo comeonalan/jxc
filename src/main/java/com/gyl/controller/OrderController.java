@@ -19,9 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gyl.entity.Customer;
 import com.gyl.entity.Order;
+import com.gyl.entity.OrderItem;
 import com.gyl.formbean.OrderDTO;
+import com.gyl.formbean.OrderItemDTO;
 import com.gyl.service.CustomerService;
 import com.gyl.service.OrderService;
+import com.gyl.service.VenderService;
+import com.mysql.jdbc.StringUtils;
 
 @RestController
 @RequestMapping("/order")
@@ -32,6 +36,9 @@ public class OrderController {
 	
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private VenderService venderService;
 
 	@PostMapping(value = "/addNewOrder")
 	public String addNewOrder(@RequestBody OrderDTO orderDTO) {
@@ -138,4 +145,89 @@ public class OrderController {
 		  return "批量删除店铺成功!"; 
 	}
 
+	@GetMapping("/getOrderItemsByOrderId")
+	public Map<String, List<OrderItem>> getOrderItemsByOrderId(long id,String productType){
+		Map<String, List<OrderItem>> map = new HashMap<String, List<OrderItem>>();
+		List<OrderItem> list = new ArrayList<OrderItem>();
+		if(StringUtils.isNullOrEmpty(productType)) {
+			 list = orderService.getOrderItemsByOrderId(id);
+		}else {
+			list = orderService.getOrderItemsByProductTypeAndOrderId(productType,id);
+		}
+		
+		map.put("orderItems", list);
+		return map;
+	}
+	
+	@PostMapping(value = "/addNewOrderItem")
+	public String addNewOrderItem(@RequestBody OrderItemDTO orderItemDTO) {
+		 OrderItem orderItem = transferOrderDTOToOrderItem(orderItemDTO);
+		 
+		 long orderId = orderItemDTO.getOrderId();
+		  try {
+			  orderService.addOrderItem(orderItem,orderId);
+		  }catch(Exception e) {
+			   System.out.println("添加订单商品错误信息--》"+e);
+			  return "添加订单商品失败!"; 
+		  }
+		  return "添加订单商品成功!"; 
+		
+	}
+	
+	
+	@PatchMapping("/modifyOrderItem")
+	public String modifyOrderItem(@RequestBody OrderItemDTO orderItemDTO) {
+//		OrderItem orderItem = transferOrderDTOToOrderItem(orderItemDTO);
+		 long orderId = orderItemDTO.getOrderId();
+	    try {
+	    	orderService.modifyOrderInfo(orderItemDTO,orderId);
+	    }catch(Exception e) {
+	    	System.out.println("更新订单商品信息失败错误信息--》"+e);
+	    	return "更新订单商品信息失败！";
+	    }
+	    return "更新订单商品信息成功！";
+	
+	}
+	
+	private OrderItem transferOrderDTOToOrderItem(OrderItemDTO orderItemDTO) {
+		 OrderItem orderItem = new OrderItem();
+		 String productType = orderItemDTO.getProductType();
+		 String venderName =venderService.getVenderByProductType(productType).getName();
+		 orderItem.setProductType(productType);
+		 orderItem.setQuantity(orderItemDTO.getQuantity());
+		 orderItem.setSellUnitPrice(orderItemDTO.getSellUnitPrice());
+		 orderItem.setVenderUnitPrice(orderItemDTO.getVenderUnitPrice());
+		 // orderItem.setVenderName(orderItemDTO.getVenderName());
+		 orderItem.setVenderName(venderName);
+		 
+		 float venderTotalPrice = orderItemDTO.getVenderUnitPrice()*orderItemDTO.getQuantity();
+		 orderItem.setVenderTotalPrice(venderTotalPrice);
+		 float SellTotalPrice = orderItemDTO.getSellUnitPrice() * orderItemDTO.getQuantity();
+		 orderItem.setSellTotalPrice(SellTotalPrice);
+		 float profit = SellTotalPrice - venderTotalPrice;
+		 orderItem.setProfit(profit);
+		 return orderItem;
+	}
+	
+	@DeleteMapping("/deleteOrderItemById")
+	public String deleteOrderItemById(long id) {
+		  try {
+			  orderService.deleteOrderItemById(id);
+		  }catch(Exception e) {
+			   System.out.println("删除订单商品错误信息--》"+e);
+			  return "删除订单商品失败!"; 
+		  }
+		  return "删除订单商品成功!"; 
+	}
+	
+	@DeleteMapping("/deleteOrderItemsByIds")
+	public String deleteOrderItemsByIds(String ids) {
+		  try {
+			  orderService.deleteOrderItemsByIds(ids);
+		  }catch(Exception e) {
+			   System.out.println("批量删除订单商品错误信息--》"+e);
+			  return "批量删除订单商品失败!"; 
+		  }
+		  return "批量删除订单商品成功!"; 
+	}
 }

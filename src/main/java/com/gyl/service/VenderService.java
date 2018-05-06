@@ -45,4 +45,8 @@ public class VenderService {
 		}
 		venderDao.deleteVendersByIds(idSet);
 	}
+	
+	public Vender getVenderByProductType(String productType) {
+		return venderDao.findByProductType(productType);
+	}
 }

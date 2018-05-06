@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -44,8 +45,8 @@ public class Order {
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 	
-	@OneToMany(mappedBy = "order",cascade = {CascadeType.REMOVE})
-	private Set<OrderDetail> orderDetails;
+	@OneToMany(mappedBy = "order",cascade = {CascadeType.REMOVE,CascadeType.MERGE},fetch=FetchType.EAGER)
+	private Set<OrderItem> orderItems;
 	
 //	public Order() {
 //	  System.out.print("无参构造器");
@@ -115,6 +116,14 @@ public class Order {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Set<OrderItem> getOrderItems() {
+		return orderItems;
+	}
+
+	public void setOrderItems(Set<OrderItem> orderItems) {
+		this.orderItems = orderItems;
 	}
 
 

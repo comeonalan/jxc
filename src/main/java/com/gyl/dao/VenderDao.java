@@ -25,4 +25,6 @@ public List<Vender> findByNameIgnoreCaseContaining(String name);
 @Query("delete from Vender vender where vender.id in :ids ")
 public void deleteVendersByIds(@Param("ids")Set<Integer> idSet);
 
+@Query(value="select v.* from product p, vender v WHERE p.type= :productType and p.vender_id = v.id",nativeQuery=true)
+public Vender findByProductType(@Param("productType")String productType);
 }
