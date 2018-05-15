@@ -18,8 +18,13 @@ public class OrderItemDTO {
 		// 出售单价
 		private float sellUnitPrice;
 		
+		private float profit;
+		
+		private float sellTotalPrice;
+		
 		private long orderId;
-
+		
+	
 		public String getProductType() {
 			return productType;
 		}
@@ -75,6 +80,26 @@ public class OrderItemDTO {
 		public void setId(long id) {
 			this.id = id;
 		}
+
+		public float getProfit() {
+			return profit;
+		}
+
+		public void setProfit(float profit) {
+			this.profit = profit;
+		}
+
+		public float getSellTotalPrice() {
+			return sellTotalPrice;
+		}
+
+		public void setSellTotalPrice(float sellTotalPrice) {
+			this.sellTotalPrice = sellTotalPrice;
+		}
+
+	 
+ 
+ 
 		
 		
 }

@@ -2,9 +2,11 @@ package com.gyl.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -229,5 +231,49 @@ public class OrderController {
 			  return "批量删除订单商品失败!"; 
 		  }
 		  return "批量删除订单商品成功!"; 
+	}
+	
+	@PostMapping(value = "/addOrderItems")
+	public String addOrderItems(@RequestBody Map<String,List<OrderItemDTO>> items,@RequestParam Long orderId) {
+		List<OrderItemDTO> orderItemDTOs = items.get("items");
+		
+		if(orderItemDTOs==null) {
+			return "请添加商品信息";
+		}
+		if(orderId==null) {
+			return "订单信息丢失，请刷新页面";
+		}
+		 
+		// long orderId = orderItemDTOs.get(0).getOrderId();
+		 Order order = orderService.findOrderById(orderId);
+		 if(order==null) {
+			 return "订单不存在";
+		 } 
+		  Set<OrderItem> orderItems = new HashSet<OrderItem>();
+		  for(OrderItemDTO orderItemDTO:orderItemDTOs) {
+			  OrderItem orderItem = new OrderItem();
+			     orderItem.setProductType(orderItemDTO.getProductType());
+				 orderItem.setQuantity(orderItemDTO.getQuantity());
+				 orderItem.setSellUnitPrice(orderItemDTO.getSellUnitPrice());
+				 orderItem.setVenderUnitPrice(orderItemDTO.getVenderUnitPrice());
+				 orderItem.setVenderName(orderItemDTO.getVenderName());
+				 orderItem.setSellTotalPrice(orderItemDTO.getSellTotalPrice());
+				 orderItem.setProfit(orderItemDTO.getProfit());
+				 orderItem.setVenderTotalPrice(orderItemDTO.getQuantity() * orderItemDTO.getVenderUnitPrice());
+				 orderItem.setOrder(order);
+				 orderItems.add(orderItem);
+		  }
+		  order.getOrderItems().clear();
+		  order.getOrderItems().addAll(orderItems);
+		  //order.setOrderItems(orderItems);
+		 
+		  try {
+			 orderService.updateOrder(order);
+		  }catch(Exception e) {
+			   System.out.println("批量添加订单商品错误信息--》"+e);
+			  return "批量添加订单商品失败!"; 
+		  }
+		  return "批量添加订单商品成功!"; 
+		
 	}
 }

@@ -45,7 +45,15 @@ public class Order {
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 	
-	@OneToMany(mappedBy = "order",cascade = {CascadeType.REMOVE,CascadeType.MERGE},fetch=FetchType.EAGER)
+	//{CascadeType.REMOVE,CascadeType.MERGE} 
+	//,fetch=FetchType.EAGER
+	/**
+	 * A为父对象，持有一个B的集合，A与B的关系为oneToMany. 
+第一次保存：设置A下的B集合成员为：1,2,3, 保存A后，B对象对应的数据表为:1,2,3
+第二次保存：设置A下的B集合成员为：2,3,4, 保存A后，B对象对应的数据表为:2,3,4 (自动删除无效数据1)
+这个就是自动去孤子功能。
+	 */
+	@OneToMany(mappedBy = "order",cascade =CascadeType.ALL,orphanRemoval=true)
 	private Set<OrderItem> orderItems;
 	
 //	public Order() {

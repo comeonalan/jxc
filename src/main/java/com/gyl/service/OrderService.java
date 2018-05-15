@@ -42,6 +42,10 @@ public class OrderService {
 		return orderDao.save(order);
 	}
 	
+	public Order updateOrder(Order order) {
+		return orderDao.saveAndFlush(order);
+	}
+	
 	public void addOrders(List<Order> orders) {
 		orderDao.saveAll(orders);
 	}
@@ -132,6 +136,10 @@ public class OrderService {
 		}
 		orderDao.deleteOrdersByIds(idSet);
 		
+	}
+	
+	public Order findOrderById(long id) {
+		return orderDao.findById(id).get();
 	}
 	
 	public Order getOrderById(long id) {
