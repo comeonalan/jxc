@@ -27,6 +27,7 @@ import com.gyl.dao.OrderItemDao;
 import com.gyl.entity.Order;
 import com.gyl.entity.OrderItem;
 import com.gyl.formbean.OrderDTO;
+import com.gyl.formbean.OrderDetail;
 import com.gyl.formbean.OrderItemDTO;
 
 @Service
@@ -146,9 +147,39 @@ public class OrderService {
 		return orderDao.getOne(id);
 	}
 	
-	public List<OrderItem> getOrderItemsByOrderId(long id){
+	public List<OrderDetail> getOrderItemsByOrderId(long id){
 		Order order = getOrderById(id);
-		return transferSetToList(order.getOrderItems());
+		List<OrderItem> list = transferSetToList(order.getOrderItems());
+		Set<String> venders = new HashSet<String>();;
+		for(OrderItem orderItem:list) {
+			if(!venders.contains(orderItem.getVenderName())) {
+				venders.add(orderItem.getVenderName());
+			}
+		}
+		
+		List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+		for(String vender:venders) {
+			OrderDetail orderDetail = new OrderDetail();
+			
+			float sellTotalPrice = 0;
+			float venderTotalPrice = 0;
+			for(OrderItem orderItem: list) {
+				
+				if(orderItem.getVenderName().equals(vender)) {
+					orderDetail.getItems().add(orderItem);
+					sellTotalPrice += orderItem.getSellTotalPrice();
+					venderTotalPrice +=orderItem.getVenderTotalPrice();
+				}
+				
+			}
+			orderDetail.setVenderName(vender);
+			orderDetail.setVenderTotalPrice(Math.round(venderTotalPrice));
+			orderDetail.setSellTotalPrice(Math.round(sellTotalPrice));
+			orderDetails.add(orderDetail);
+			
+		}
+		 
+		return orderDetails;
 	}
 	
 	private List<OrderItem> transferSetToList(Set<OrderItem> set) {

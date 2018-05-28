@@ -23,6 +23,7 @@ import com.gyl.entity.Customer;
 import com.gyl.entity.Order;
 import com.gyl.entity.OrderItem;
 import com.gyl.formbean.OrderDTO;
+import com.gyl.formbean.OrderDetail;
 import com.gyl.formbean.OrderItemDTO;
 import com.gyl.service.CustomerService;
 import com.gyl.service.OrderService;
@@ -147,16 +148,25 @@ public class OrderController {
 		  return "批量删除店铺成功!"; 
 	}
 
+//	@GetMapping("/getOrderItemsByOrderId")
+//	public Map<String, List<OrderItem>> getOrderItemsByOrderId(long id,String productType){
+//		Map<String, List<OrderItem>> map = new HashMap<String, List<OrderItem>>();
+//		List<OrderItem> list = new ArrayList<OrderItem>();
+//		if(StringUtils.isNullOrEmpty(productType)) {
+//			 list = orderService.getOrderItemsByOrderId(id);
+//		}else {
+//			list = orderService.getOrderItemsByProductTypeAndOrderId(productType,id);
+//		}
+//		
+//		map.put("orderItems", list);
+//		return map;
+//	}
+	
 	@GetMapping("/getOrderItemsByOrderId")
-	public Map<String, List<OrderItem>> getOrderItemsByOrderId(long id,String productType){
-		Map<String, List<OrderItem>> map = new HashMap<String, List<OrderItem>>();
-		List<OrderItem> list = new ArrayList<OrderItem>();
-		if(StringUtils.isNullOrEmpty(productType)) {
-			 list = orderService.getOrderItemsByOrderId(id);
-		}else {
-			list = orderService.getOrderItemsByProductTypeAndOrderId(productType,id);
-		}
-		
+	public Map<String, List<OrderDetail>> getOrderItemsByOrderId(long id){
+		Map<String, List<OrderDetail>> map = new HashMap<String, List<OrderDetail>>();
+		List<OrderDetail> list = new ArrayList<OrderDetail>();
+	    list = orderService.getOrderItemsByOrderId(id);
 		map.put("orderItems", list);
 		return map;
 	}
@@ -233,11 +243,55 @@ public class OrderController {
 		  return "批量删除订单商品成功!"; 
 	}
 	
+//	@PostMapping(value = "/addOrderItems")
+//	public String addOrderItems(@RequestBody Map<String,List<OrderItemDTO>> items,@RequestParam Long orderId) {
+//		List<OrderItemDTO> orderItemDTOs = items.get("items");
+//		
+//		if(orderItemDTOs==null) {
+//			return "请添加商品信息";
+//		}
+//		if(orderId==null) {
+//			return "订单信息丢失，请刷新页面";
+//		}
+//		 
+//		// long orderId = orderItemDTOs.get(0).getOrderId();
+//		 Order order = orderService.findOrderById(orderId);
+//		 if(order==null) {
+//			 return "订单不存在";
+//		 } 
+//		  Set<OrderItem> orderItems = new HashSet<OrderItem>();
+//		  for(OrderItemDTO orderItemDTO:orderItemDTOs) {
+//			  OrderItem orderItem = new OrderItem();
+//			     orderItem.setProductType(orderItemDTO.getProductType());
+//				 orderItem.setQuantity(orderItemDTO.getQuantity());
+//				 orderItem.setSellUnitPrice(orderItemDTO.getSellUnitPrice());
+//				 orderItem.setVenderUnitPrice(orderItemDTO.getVenderUnitPrice());
+//				 orderItem.setVenderName(orderItemDTO.getVenderName());
+//				 orderItem.setSellTotalPrice(orderItemDTO.getSellTotalPrice());
+//				 orderItem.setProfit(orderItemDTO.getProfit());
+//				 orderItem.setVenderTotalPrice(orderItemDTO.getQuantity() * orderItemDTO.getVenderUnitPrice());
+//				 orderItem.setOrder(order);
+//				 orderItems.add(orderItem);
+//		  }
+//		  order.getOrderItems().clear();
+//		  order.getOrderItems().addAll(orderItems);
+//		  //order.setOrderItems(orderItems);
+//		 
+//		  try {
+//			 orderService.updateOrder(order);
+//		  }catch(Exception e) {
+//			   System.out.println("批量添加订单商品错误信息--》"+e);
+//			  return "批量添加订单商品失败!"; 
+//		  }
+//		  return "批量添加订单商品成功!"; 
+//		
+//	}
+	
 	@PostMapping(value = "/addOrderItems")
-	public String addOrderItems(@RequestBody Map<String,List<OrderItemDTO>> items,@RequestParam Long orderId) {
-		List<OrderItemDTO> orderItemDTOs = items.get("items");
+	public String addOrderItems(@RequestBody Map<String,List<OrderDetail>> items,@RequestParam Long orderId) {
+		List<OrderDetail> orderDetails = items.get("items");
 		
-		if(orderItemDTOs==null) {
+		if(orderDetails==null) {
 			return "请添加商品信息";
 		}
 		if(orderId==null) {
@@ -249,22 +303,34 @@ public class OrderController {
 		 if(order==null) {
 			 return "订单不存在";
 		 } 
-		  Set<OrderItem> orderItems = new HashSet<OrderItem>();
-		  for(OrderItemDTO orderItemDTO:orderItemDTOs) {
-			  OrderItem orderItem = new OrderItem();
-			     orderItem.setProductType(orderItemDTO.getProductType());
-				 orderItem.setQuantity(orderItemDTO.getQuantity());
-				 orderItem.setSellUnitPrice(orderItemDTO.getSellUnitPrice());
-				 orderItem.setVenderUnitPrice(orderItemDTO.getVenderUnitPrice());
-				 orderItem.setVenderName(orderItemDTO.getVenderName());
-				 orderItem.setSellTotalPrice(orderItemDTO.getSellTotalPrice());
-				 orderItem.setProfit(orderItemDTO.getProfit());
-				 orderItem.setVenderTotalPrice(orderItemDTO.getQuantity() * orderItemDTO.getVenderUnitPrice());
-				 orderItem.setOrder(order);
-				 orderItems.add(orderItem);
-		  }
 		  order.getOrderItems().clear();
-		  order.getOrderItems().addAll(orderItems);
+		 for(OrderDetail orderDetail:orderDetails) {
+			 List<OrderItem> orderItems = orderDetail.getItems();
+			 for(OrderItem item:orderItems) {
+				 item.setOrder(order);
+				 item.setSellTotalPrice(item.getSellUnitPrice()*item.getQuantity());
+				 item.setVenderTotalPrice(item.getVenderUnitPrice()*item.getQuantity());
+			 }
+			 order.getOrderItems().addAll(orderItems);
+		 }
+		 
+		 
+//		  Set<OrderItem> orderItems = new HashSet<OrderItem>();
+//		  for(OrderItemDTO orderItemDTO:orderItemDTOs) {
+//			  OrderItem orderItem = new OrderItem();
+//			     orderItem.setProductType(orderItemDTO.getProductType());
+//				 orderItem.setQuantity(orderItemDTO.getQuantity());
+//				 orderItem.setSellUnitPrice(orderItemDTO.getSellUnitPrice());
+//				 orderItem.setVenderUnitPrice(orderItemDTO.getVenderUnitPrice());
+//				 orderItem.setVenderName(orderItemDTO.getVenderName());
+//				 orderItem.setSellTotalPrice(orderItemDTO.getSellTotalPrice());
+//				 orderItem.setProfit(orderItemDTO.getProfit());
+//				 orderItem.setVenderTotalPrice(orderItemDTO.getQuantity() * orderItemDTO.getVenderUnitPrice());
+//				 orderItem.setOrder(order);
+//				 orderItems.add(orderItem);
+//		  }
+		
+		  
 		  //order.setOrderItems(orderItems);
 		 
 		  try {
